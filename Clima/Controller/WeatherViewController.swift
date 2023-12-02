@@ -25,12 +25,16 @@ class WeatherViewController: UIViewController {
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
-    // locationManager.distanceFilter = 20
-    // locationManager.desiredAccuracy = 20
         
         weatherManager.delegate = self
         searchTextField.delegate = self
     }
+    
+    @IBAction func myLocationButton(_ sender: UIButton) {
+      //  locationManager.startUpdatingLocation()
+        locationManager.requestLocation()
+    }
+    
     
     
 }
@@ -77,6 +81,7 @@ extension WeatherViewController: WeatherManagerDelegate {
         DispatchQueue.main.async {
             self.temperatureLabel.text = weather.temperatureString
             self.conditionImageView.image = UIImage(systemName: weather.conditionName)
+            self.cityLabel.text = weather.cityName
         }
     }
     
@@ -90,10 +95,15 @@ extension WeatherViewController: WeatherManagerDelegate {
 extension WeatherViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
+            locationManager.stopUpdatingLocation() // ???
             let lat = location.coordinate.latitude
             let lon = location.coordinate.longitude
             weatherManager.fetchWeather(latitude: lat, longitude: lon)
+         //   weatherManager.fetchWeatherFromCoordinates(latitude: lat, longitude: lon)
         }
+       // let lat = 51.0 //???
+      //  let lon = 20.0 //???
+      //  weatherManager.fetchWeatherFromCoordinates(latitude: lat, longitude: lon) //???
     }
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error)
